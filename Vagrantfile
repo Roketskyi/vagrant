@@ -3,4 +3,5 @@ Vagrant.configure("2") do |config|
 
   # Переадресація порту SSH
   config.vm.network "forwarded_port", guest: 22, host: 2222
+  config.vm.network "public_network"
 end
