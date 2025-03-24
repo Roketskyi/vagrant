@@ -1,58 +1,66 @@
-# Spring Boot Hello World Project
+# Система управління студентами
 
-Цей проект демонструє базові можливості Spring Boot, включаючи:
-- REST API endpoint
-- Thymeleaf шаблонізацію
-- Сервісний рівень
-- Управління користувачами
+Це простий Spring Boot додаток для управління списком студентів з використанням Thymeleaf та Bootstrap.
 
 ## Вимоги
 
-- Java 11
+- Java 11 або вище
 - Maven
 - Vagrant
 - VirtualBox
 
-## Налаштування середовища розробки
+## Встановлення та запуск
 
-1. Запустіть віртуальну машину:
+1. Клонуйте репозиторій:
+```bash
+git clone <url-репозиторію>
+cd student-management
+```
+
+2. Запустіть віртуальну машину за допомогою Vagrant:
 ```bash
 vagrant up
 ```
 
-2. Підключіться до віртуальної машини:
+3. Підключіться до віртуальної машини:
 ```bash
 vagrant ssh
 ```
 
-3. Перейдіть до директорії проекту:
+4. Перейдіть до директорії проекту:
 ```bash
 cd /vagrant
 ```
 
-4. Зберіть проект:
+5. Зберіть проект за допомогою Maven:
 ```bash
 mvn clean package
 ```
 
-5. Запустіть додаток:
+6. Запустіть додаток:
 ```bash
-java -jar target/spring-hello-world-0.0.1-SNAPSHOT.jar
+java -jar target/student-management-0.0.1-SNAPSHOT.jar
 ```
 
-## Доступні ендпоінти
+7. Відкрийте браузер і перейдіть за адресою:
+```
+http://localhost:8080/students
+```
 
-- `http://localhost:8080/hello` - REST API endpoint, що повертає "Hello, World!"
-- `http://localhost:8080/greet` - Сторінка привітання з використанням Thymeleaf
-- `http://localhost:8080/users` - Сторінка зі списком користувачів
+## Функціональність
 
-## Структура проекту
+- Перегляд списку студентів
+- Додавання нового студента
+- Редагування існуючого студента
+- Видалення студента
+- Фільтрація студентів за віком
+- Валідація даних форми
 
-- `src/main/java/com/example/springhelloworld/`
-  - `controller/` - Контролери
-  - `model/` - Моделі даних
-  - `service/` - Сервісний рівень
-  - `SpringHelloWorldApplication.java` - Основний клас додатку
-- `src/main/resources/templates/` - Thymeleaf шаблони
-- `pom.xml` - Конфігурація Maven
-- `Vagrantfile` - Конфігурація Vagrant 
+## Технології
+
+- Spring Boot
+- Spring MVC
+- Thymeleaf
+- Bootstrap
+- Lombok
+- Maven 
