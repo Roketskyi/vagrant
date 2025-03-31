@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Recipe Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .recipe-card {
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-image {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-utensils"></i> Recipe Manager</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showAllRecipes()">All Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showAddRecipeForm()">Add Recipe</a>
+                    </li>
+                </ul>
+                <form class="d-flex" onsubmit="return searchRecipes(event)">
+                    <input class="form-control me-2" type="search" placeholder="Search recipes" id="searchInput">
+                    <button class="btn btn-outline-light" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div id="recipeList" class="row">
+            <!-- Recipe cards will be dynamically inserted here -->
+        </div>
+
+        <div id="addRecipeForm" class="row" style="display: none;">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Add New Recipe</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="recipeForm" onsubmit="return saveRecipe(event)">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Recipe Name</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cookingTime" class="form-label">Cooking Time (minutes)</label>
+                                <input type="number" class="form-control" id="cookingTime" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="difficulty" class="form-label">Difficulty</label>
+                                <select class="form-control" id="difficulty" required>
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ingredients" class="form-label">Ingredients (one per line)</label>
+                                <textarea class="form-control" id="ingredients" rows="5" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="steps" class="form-label">Steps (one per line)</label>
+                                <textarea class="form-control" id="steps" rows="5" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="imageUrl" class="form-label">Image URL</label>
+                                <input type="url" class="form-control" id="imageUrl">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Recipe</button>
+                            <button type="button" class="btn btn-secondary" onclick="showAllRecipes()">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load all recipes when the page loads
+        document.addEventListener('DOMContentLoaded', showAllRecipes);
+
+        function showAllRecipes() {
+            document.getElementById('addRecipeForm').style.display = 'none';
+            document.getElementById('recipeList').style.display = 'flex';
+            
+            fetch('/api/recipes')
+                .then(response => response.json())
+                .then(recipes => {
+                    const recipeList = document.getElementById('recipeList');
+                    recipeList.innerHTML = '';
+                    
+                    recipes.forEach(recipe => {
+                        const card = createRecipeCard(recipe);
+                        recipeList.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function createRecipeCard(recipe) {
+            const col = document.createElement('div');
+            col.className = 'col-md-4';
+            
+            col.innerHTML = `
+                <div class="card recipe-card">
+                    <img src="${recipe.imageUrl || 'https://via.placeholder.com/300x200'}" 
+                         class="card-img-top recipe-image" alt="${recipe.name}">
+                    <div class="card-body">
+                        <h5 class="card-title">${recipe.name}</h5>
+                        <p class="card-text">${recipe.description}</p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="fas fa-clock"></i> ${recipe.cookingTime} min |
+                                <i class="fas fa-signal"></i> ${recipe.difficulty}
+                            </small>
+                        </p>
+                        <button class="btn btn-primary" onclick="viewRecipe(${recipe.id})">View Details</button>
+                        <button class="btn btn-danger" onclick="deleteRecipe(${recipe.id})">Delete</button>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+
+        function showAddRecipeForm() {
+            document.getElementById('recipeList').style.display = 'none';
+            document.getElementById('addRecipeForm').style.display = 'block';
+        }
+
+        function saveRecipe(event) {
+            event.preventDefault();
+            
+            const recipe = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                cookingTime: parseInt(document.getElementById('cookingTime').value),
+                difficulty: document.getElementById('difficulty').value,
+                ingredients: document.getElementById('ingredients').value.split('\n').filter(i => i.trim()),
+                steps: document.getElementById('steps').value.split('\n').filter(s => s.trim()),
+                imageUrl: document.getElementById('imageUrl').value
+            };
+            
+            fetch('/api/recipes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(recipe)
+            })
+            .then(response => response.json())
+            .then(() => {
+                showAllRecipes();
+                document.getElementById('recipeForm').reset();
+            })
+            .catch(error => console.error('Error:', error));
+            
+            return false;
+        }
+
+        function deleteRecipe(id) {
+            if (confirm('Are you sure you want to delete this recipe?')) {
+                fetch(`/api/recipes/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(() => showAllRecipes())
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function searchRecipes(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value;
+            
+            fetch(`/api/recipes/search?name=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(recipes => {
+                    const recipeList = document.getElementById('recipeList');
+                    recipeList.innerHTML = '';
+                    
+                    recipes.forEach(recipe => {
+                        const card = createRecipeCard(recipe);
+                        recipeList.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+            
+            return false;
+        }
+
+        function viewRecipe(id) {
+            // Implement recipe detail view
+            alert('Recipe detail view will be implemented here');
+        }
+    </script>
+</body>
+</html> 

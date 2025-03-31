@@ -1,66 +1,84 @@
-# Система управління студентами
+# Student Management System
 
-Це простий Spring Boot додаток для управління списком студентів з використанням Thymeleaf та Bootstrap.
+Spring Boot REST API застосунок для управління студентами та користувачами.
+
+## Технології
+
+- Spring Boot 2.7.0
+- Spring Web
+- Spring Boot Validation
+- Lombok
+- Springdoc OpenAPI (Swagger)
+- MySQL
 
 ## Вимоги
 
 - Java 11 або вище
 - Maven
-- Vagrant
-- VirtualBox
+- MySQL 8.0
 
-## Встановлення та запуск
+## Встановлення
 
 1. Клонуйте репозиторій:
 ```bash
-git clone <url-репозиторію>
+git clone <repository-url>
 cd student-management
 ```
 
-2. Запустіть віртуальну машину за допомогою Vagrant:
+2. Налаштуйте базу даних:
+```sql
+CREATE DATABASE students_db;
+CREATE USER 'students_user'@'localhost' IDENTIFIED BY 'students_password';
+GRANT ALL PRIVILEGES ON students_db.* TO 'students_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+3. Зберіть проект:
 ```bash
-vagrant up
+mvn clean install
 ```
 
-3. Підключіться до віртуальної машини:
+4. Запустіть додаток:
 ```bash
-vagrant ssh
+mvn spring-boot:run
 ```
 
-4. Перейдіть до директорії проекту:
-```bash
-cd /vagrant
+## API Endpoints
+
+- GET /api/students - Отримати всіх студентів
+- GET /api/students/{id} - Отримати студента за ID
+- POST /api/students - Створити нового студента
+- PUT /api/students/{id} - Оновити студента
+- DELETE /api/students/{id} - Видалити студента
+
+## Swagger Documentation
+
+Swagger UI доступний за адресою: http://localhost:8080/swagger-ui.html
+
+## Валідація
+
+- Ім'я студента: не null, розмір від 2 до 50 символів
+- Вік студента: від 16 до 100 років
+
+## Структура проекту
+
 ```
-
-5. Зберіть проект за допомогою Maven:
-```bash
-mvn clean package
-```
-
-6. Запустіть додаток:
-```bash
-java -jar target/student-management-0.0.1-SNAPSHOT.jar
-```
-
-7. Відкрийте браузер і перейдіть за адресою:
-```
-http://localhost:8080/students
-```
-
-## Функціональність
-
-- Перегляд списку студентів
-- Додавання нового студента
-- Редагування існуючого студента
-- Видалення студента
-- Фільтрація студентів за віком
-- Валідація даних форми
-
-## Технології
-
-- Spring Boot
-- Spring MVC
-- Thymeleaf
-- Bootstrap
-- Lombok
-- Maven 
+src/main/java/
+├── com.students
+│   ├── controller
+│   │   ├── HomeController.java
+│   │   └── StudentRestController.java
+│   ├── dto
+│   │   ├── RequestStudentDTO.java
+│   │   └── ResponseStudentDTO.java
+│   ├── model
+│   │   ├── Student.java
+│   │   ├── User.java
+│   │   └── Role.java
+│   ├── repository
+│   │   └── StudentRepository.java
+│   └── service
+│       ├── StudentService.java
+│       └── impl
+│           └── StudentServiceImpl.java
+``` 
