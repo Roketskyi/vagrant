@@ -1,0 +1,14 @@
+C:\roman\bajan\app\src\main\java\com\students\controller\StudentRestController.java
+C:\roman\bajan\app\src\main\java\com\students\StudentManagementApplication.java
+C:\roman\bajan\app\src\main\java\com\students\service\StudentService.java
+C:\roman\bajan\app\src\main\java\com\students\model\Role.java
+C:\roman\bajan\app\src\main\java\com\students\dto\RequestStudentDTO.java
+C:\roman\bajan\app\src\main\java\com\students\model\User.java
+C:\roman\bajan\app\src\main\java\com\students\model\Student.java
+C:\roman\bajan\app\src\main\java\com\students\service\impl\StudentServiceImpl.java
+C:\roman\bajan\app\src\main\java\com\students\exception\GlobalExceptionHandler.java
+C:\roman\bajan\app\src\main\java\com\students\repository\StudentRepository.java
+C:\roman\bajan\app\src\main\java\com\students\dto\ResponseStudentDTO.java
+C:\roman\bajan\app\src\main\java\com\students\repository\InMemoryStudentRepository.java
+C:\roman\bajan\app\src\main\java\com\students\dto\StudentResponseDTO.java
+C:\roman\bajan\app\src\main\java\com\students\controller\HomeController.java
